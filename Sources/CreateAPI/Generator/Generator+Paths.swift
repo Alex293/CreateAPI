@@ -145,7 +145,14 @@ extension Generator {
             })
         }
         if !options.paths.exclude.isEmpty {
-            return !options.paths.exclude.contains(path)
+            return !options.paths.exclude.contains(where: { include in
+               switch (include.first, include.last, include) {
+               case ("*", "*", _): return path.contains(include.dropFirst().dropLast())
+               case ("*", _, _): return path.hasSuffix(include.dropFirst())
+               case (_, "*", _): return path.hasPrefix(include.dropLast())
+               default: return include == path
+               }
+            })
         }
         return true
     }
