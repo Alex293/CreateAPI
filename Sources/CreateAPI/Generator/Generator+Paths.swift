@@ -137,7 +137,7 @@ extension Generator {
         if !options.paths.include.isEmpty {
             return options.paths.include.contains(where: { include in
                 switch (include.first, include.last, include) {
-                case ("*", "*", _): return include.contains(path.dropFirst().dropLast())
+                case ("*", "*", _): return path.contains(include.dropFirst().dropLast())
                 case ("*", _, _): return path.hasSuffix(include.dropFirst())
                 case (_, "*", _): return path.hasPrefix(include.dropLast())
                 default: return include == path
