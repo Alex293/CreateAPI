@@ -135,7 +135,14 @@ extension Generator {
 
     private func shouldGenerate(path: String) -> Bool {
         if !options.paths.include.isEmpty {
-            return options.paths.include.contains(path)
+            return options.paths.include.contains(where: { include in
+                switch (include.first, include.last, include) {
+                case ("*", "*", _): return include.contains(path.dropFirst().dropLast())
+                case ("*", _, _): return path.hasSuffix(include.dropFirst())
+                case (_, "*", _): return path.hasPrefix(include.dropLast())
+                default: return include == path
+                }
+            })
         }
         if !options.paths.exclude.isEmpty {
             return !options.paths.exclude.contains(path)
